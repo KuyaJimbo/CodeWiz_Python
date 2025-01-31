@@ -25,10 +25,9 @@ class Player:
             self.rect.y -= self.speed
         if keys[pygame.K_s]:
             self.rect.y += self.speed
-        if keys[pygame.K_a]:
-            self.rect.x -= self.speed
-        if keys[pygame.K_d]:
-            self.rect.x += self.speed
+        # add movement to the left with pygame.K_a
+        
+        # add movement to the right with pygame.K_d
 
     def draw(self, screen):
         pygame.draw.rect(screen, RED, self.rect)
@@ -97,10 +96,25 @@ class Level:
 
 # Define levels
 levels = [
-    # Level((player_x, player_y), [(obstacle_x, obstacle_y, vert_range, vert_timer, horiz_range, horiz_timer)], (coin_x, coin_y))
-    Level((100, 100), [(200, 200, 100, 120, 0, 0), (400, 300, 0, 0, 150, 180)], (700, 500)),
-    Level((50, 50), [(300, 200, 150, 100, 0, 0), (500, 400, 0, 0, 200, 150)], (750, 550)),
-    Level((200, 200), [(250, 250, 120, 90, 120, 90)], (600, 400))
+    Level((200, 200), [(250, 250, 120, 90, 120, 90)], (600, 400)),
+
+    Level(
+      (100, 100), 
+      [(200, 200, 100, 120, 0, 0),
+       (400, 300, 0, 0, 150, 180)
+      ],
+      (700, 500)
+    ),
+    
+    Level(
+      (50, 50),
+      [(300, 200, 0, 0, 150, 100), 
+       (500, 400, 0, 0, 200, 150)
+      ],
+      (750, 550)
+    )
+    
+    
 ]
 
 current_level = 0
