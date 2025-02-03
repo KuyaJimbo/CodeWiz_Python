@@ -120,16 +120,12 @@ circle = Circle(200, 300, 50, RED)
 # Rectangle(x, y, width, height, color)
 rectangle = Rectangle(400, 250, 100, 150, GREEN)
 # Triangle(x, y, size, color)
-triangle = Triangle(600, 350, 80. BLUE)
+triangle = Triangle(600, 350, 80, BLUE)
 
 # Game loop
 running = True
 while running:
     screen.fill(WHITE)
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
     
     # Draw shapes
     circle.draw(screen)
