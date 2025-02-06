@@ -39,22 +39,37 @@ class Wall:
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
+import pygame
+
 class LineEnemy:
     def __init__(self, x1, y1, x2, y2, speed, color):
         self.rect = pygame.Rect(x1, y1, 20, 20)
         self.start_x, self.start_y = x1, y1
         self.end_x, self.end_y = x2, y2
         self.speed = speed
-        self.direction = 1
         self.color = color
-    
+        self.direction = 1
+        
+        # Calculate movement increments
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = (dx**2 + dy**2) ** 0.5  # Euclidean distance
+        self.norm_x = (dx / distance) * speed
+        self.norm_y = (dy / distance) * speed
+
     def move(self):
-        self.rect.x += self.speed * self.direction
-        if self.rect.x >= self.end_x or self.rect.x <= self.start_x:
-            self.direction *= -1
-    
+        self.rect.x += self.norm_x * self.direction
+        self.rect.y += self.norm_y * self.direction
+
+        # Check if it reached the end or start point
+        if self.direction == 1 and (self.rect.x >= self.end_x and self.rect.y >= self.end_y):
+            self.direction = -1
+        elif self.direction == -1 and (self.rect.x <= self.start_x and self.rect.y <= self.start_y):
+            self.direction = 1
+
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
+
 
 class RadialEnemy:
     def __init__(self, cx, cy, radius, speed, color):
