@@ -1,95 +1,110 @@
 import pygame
-from classes import Player, Coin, Wall, LineEnemy, RadialEnemy, Level
+import math
 
-pygame.init()
+# Constants
+BG_COLOR = (30, 30, 30)
 
-# GAME VARIABLES
-WIDTH, HEIGHT = 800, 600
-WHITE = (255, 255, 255)
-PLAYER_COLOR = (0, 255, 0)
-COIN_COLOR = (255, 215, 0)
-WALL_COLOR = (255, 0, 0)
-LINE_ENEMY_COLOR = (0, 0, 255)
-RADIAL_ENEMY_COLOR = (255, 0, 255)
-PLAYER_SIZE = 20
-COIN_SIZE = 15
-PLAYER_SPEED = 5
-
-# Screen setup
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-clock = pygame.time.Clock()
-
-# Player(x, y, size, color, speed)
-player = Player(50, HEIGHT // 2, PLAYER_SIZE, PLAYER_COLOR, PLAYER_SPEED)
-# Coin(x, y, size, color)
-coin = Coin(WIDTH - 50, HEIGHT // 2, COIN_SIZE, COIN_COLOR)
-
-# Creating outer walls
-outer1 = Wall(0, 0, WIDTH, 20, WALL_COLOR)
-outer2 = Wall(0, 0, 20, HEIGHT, WALL_COLOR)
-outer3 = Wall(0, HEIGHT - 20, WIDTH, 20, WALL_COLOR)
-outer4 = Wall(WIDTH - 20, 0, 20, HEIGHT, WALL_COLOR)
-outers = [outer1, outer2, outer3, outer4]
-
-
-# LEVEL 1: WALLS
-# Wall(x, y, width, height, color)
-wall_1 = Wall(200, 200, 400, 20, WALL_COLOR)
-wall_2 = Wall(200, 200, 20, 200, WALL_COLOR)
-
-# Level(walls, line_enemies, radial_enemies)
-level1 = Level([wall_1] + outers, [], [])
-
-# LEVEL 2: LINE ENEMIES
-enemy_L1 = LineEnemy(300, 300, 500, 300, 2, LINE_ENEMY_COLOR)
-enemy_L2 = LineEnemy(300, 500, 500, 500, 2, LINE_ENEMY_COLOR)
-# Level(walls, line_enemies, radial_enemies)
-level2 = Level([] + outers, [enemy_L1, enemy_L2], [])
-
-# LEVEL 3: RADIAL ENEMIES
-enemy_R1 = RadialEnemy(WIDTH // 2, HEIGHT // 2, 100, 0.01, RADIAL_ENEMY_COLOR)
-enemy_R2 = RadialEnemy(WIDTH // 2, HEIGHT // 2, 200, 0.01, RADIAL_ENEMY_COLOR)
-enemy_R3 = RadialEnemy(WIDTH // 2, HEIGHT // 2, 300, 0.01, RADIAL_ENEMY_COLOR)
-level3 = Level([] + outers, [], [enemy_R1, enemy_R2, enemy_R3])
-
-# LEVEL 4: WALLS, LINE ENEMIES, RADIAL ENEMIES
-# Level(walls, line_enemies, radial_enemies)
-level4 = Level([wall_1, wall_2] + outers, [enemy_L1, enemy_L2], [enemy_R1, enemy_R2, enemy_R3])
-
-# ALL LEVELS
-levels = [level1, level2, level3, level4]
-level = 0
-
-# Game loop
-running = True
-while running:
-    keys = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            print(pygame.mouse.get_pos())
+class Player:
+    def __init__(self, x, y, size, color, speed):
+        self.rect = pygame.Rect(x, y, size, size)
+        self.color = color
+        self.speed = speed
     
-    player.move(keys)
-    
-    # Check for coin collection
-    if player.rect.colliderect(coin.rect):
-        level += 1
-        player.rect.x, player.rect.y = 50, HEIGHT // 2
-        if level >= len(levels):
-            level = 0
-    
-    # Check for collisions with enemies
-    for enemy in levels[level].line_enemies + levels[level].radial_enemies:
-        if player.rect.colliderect(enemy.rect):
-            player.rect.x, player.rect.y = 50, HEIGHT // 2
-    
-    # Check for collisions with walls
-    for wall in levels[level].walls:
-        if player.rect.colliderect(wall.rect):
-            player.rect.x, player.rect.y = 50, HEIGHT // 2
-    
-    levels[level].play(screen, player, coin)
-    clock.tick(60)
+    def move(self, keys):
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.speed
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += self.speed
+        if keys[pygame.K_UP]:
+            self.rect.y -= self.speed
+        if keys[pygame.K_DOWN]:
+            self.rect.y += self.speed
 
-pygame.quit()
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+class Coin:
+    def __init__(self, x, y, size, color):
+        self.rect = pygame.Rect(x, y, size, size)
+        self.color = color
+    
+    def draw(self, screen):
+        pygame.draw.ellipse(screen, self.color, self.rect)
+
+class Wall:
+    def __init__(self, x, y, width, height, color):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+class LineEnemy:
+    def __init__(self, x1, y1, x2, y2, speed, color):
+        self.rect = pygame.Rect(x1, y1, 20, 20)
+        self.start_x, self.start_y = x1, y1
+        self.end_x, self.end_y = x2, y2
+        self.speed = speed
+        self.color = color
+        self.direction = 1
+        
+        # Calculate movement increments
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = (dx**2 + dy**2) ** 0.5  # Euclidean distance
+        self.norm_x = (dx / distance) * speed
+        self.norm_y = (dy / distance) * speed
+
+    def move(self):
+        self.rect.x += self.norm_x * self.direction
+        self.rect.y += self.norm_y * self.direction
+
+        # Check if it reached the end or start point
+        if self.direction == 1 and (self.rect.x >= self.end_x and self.rect.y >= self.end_y):
+            self.direction = -1
+        elif self.direction == -1 and (self.rect.x <= self.start_x and self.rect.y <= self.start_y):
+            self.direction = 1
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+
+class RadialEnemy:
+    def __init__(self, cx, cy, radius, speed, color):
+        self.cx, self.cy = cx, cy
+        self.rect = pygame.Rect(cx + radius, cy, 20, 20)
+        self.radius = radius
+        self.angle = 0
+        self.speed = speed
+        self.color = color
+    
+    def move(self):
+        self.angle += self.speed
+        x = self.cx + self.radius * math.cos(self.angle)
+        y = self.cy + self.radius * math.sin(self.angle)
+        self.rect = pygame.Rect(x, y, 20, 20)
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+class Level:
+    def __init__(self, walls, line_enemies, radial_enemies):
+        self.walls = walls
+        self.line_enemies = line_enemies
+        self.radial_enemies = radial_enemies
+    
+    def play(self, screen, player, coin):
+        screen.fill(BG_COLOR)
+        player.draw(screen)
+        coin.draw(screen)
+        
+        for wall in self.walls:
+            wall.draw(screen)
+        for enemy in self.line_enemies:
+            enemy.move()
+            enemy.draw(screen)
+        for enemy in self.radial_enemies:
+            enemy.move()
+            enemy.draw(screen)
+        
+        pygame.display.flip()
