@@ -39,8 +39,6 @@ class Wall:
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
-import pygame
-
 class LineEnemy:
     def __init__(self, x1, y1, x2, y2, speed, color):
         self.rect = pygame.Rect(x1, y1, 20, 20)
