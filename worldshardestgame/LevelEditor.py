@@ -114,15 +114,15 @@ class LevelEditor:
                   f"{wall.rect.width}, {wall.rect.height}, WALL_COLOR)")
         
         # Print line enemy declarations
-        print("#l_{self.prints} = LineEnemy(x1, y1, x2, y2, speed, LINE_ENEMY_COLOR)")
+        print("#l_ = LineEnemy(x1, y1, x2, y2, speed, LINE_ENEMY_COLOR)")
         for i, enemy in enumerate(self.line_enemies, 1):
-            print(f"l{i} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
+            print(f"l{i}{self.prints} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
                   f"{enemy.end_x}, {enemy.end_y}, 2, LINE_ENEMY_COLOR)")
         
         # Print radial enemy declarations
         print("#r_{self.prints} = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
         for i, enemy in enumerate(self.radial_enemies, 1):
-            print(f"r{i} = RadialEnemy({enemy.cx}, {enemy.cy}, "
+            print(f"r{i}{self.prints} = RadialEnemy({enemy.cx}, {enemy.cy}, "
                   f"{enemy.radius}, 0.01, RADIAL_ENEMY_COLOR)")
         
         # Print level constructor
