@@ -116,19 +116,19 @@ class LevelEditor:
         # Print line enemy declarations
         print("#l_ = LineEnemy(x1, y1, x2, y2, speed, LINE_ENEMY_COLOR)")
         for i, enemy in enumerate(self.line_enemies, 1):
-            print(f"l{i}{self.prints} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
+            print(f"l{i}_{self.prints} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
                   f"{enemy.end_x}, {enemy.end_y}, 2, LINE_ENEMY_COLOR)")
         
         # Print radial enemy declarations
         print("#r_ = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
         for i, enemy in enumerate(self.radial_enemies, 1):
-            print(f"r{i}{self.prints} = RadialEnemy({enemy.cx}, {enemy.cy}, "
+            print(f"r{i}_{self.prints} = RadialEnemy({enemy.cx}, {enemy.cy}, "
                   f"{enemy.radius}, 0.01, RADIAL_ENEMY_COLOR)")
         
         # Print level constructor
-        wall_vars = [f"w{i}{self.prints}" for i in range(1, len(self.walls) + 1)]
-        line_vars = [f"l{i}{self.prints}" for i in range(1, len(self.line_enemies) + 1)]
-        rad_vars = [f"r{i}{self.prints}" for i in range(1, len(self.radial_enemies) + 1)]
+        wall_vars = [f"w{i}_{self.prints}" for i in range(1, len(self.walls) + 1)]
+        line_vars = [f"l{i}_{self.prints}" for i in range(1, len(self.line_enemies) + 1)]
+        rad_vars = [f"r{i}_{self.prints}" for i in range(1, len(self.radial_enemies) + 1)]
         
         wall_str = f"[{', '.join(wall_vars)}]+outers" if wall_vars else "outers"
         line_str = f"[{', '.join(line_vars)}]" if line_vars else "[]"
