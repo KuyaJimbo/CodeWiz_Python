@@ -15,6 +15,7 @@ PREVIEW_COLOR = (128, 128, 128, 128)  # Semi-transparent gray
 
 class LevelEditor:
     def __init__(self):
+        self.prints = 0
         self.walls = []
         self.line_enemies = []
         self.radial_enemies = []
@@ -57,6 +58,7 @@ class LevelEditor:
         # Show constructor when shift is newly pressed
         shift_now = keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]
         if shift_now and not self.shift_pressed:
+            self.prints += 1
             self.print_constructor()
         self.shift_pressed = shift_now
             
@@ -108,31 +110,31 @@ class LevelEditor:
         # Print wall declarations
         print("#w_ = Wall(x, y, width, height, WALL_COLOR)")
         for i, wall in enumerate(self.walls, 1):
-            print(f"w{i} = Wall({wall.rect.x}, {wall.rect.y}, "
+            print(f"w{i}_{self.prints} = Wall({wall.rect.x}, {wall.rect.y}, "
                   f"{wall.rect.width}, {wall.rect.height}, WALL_COLOR)")
         
         # Print line enemy declarations
         print("#l_ = LineEnemy(x1, y1, x2, y2, speed, LINE_ENEMY_COLOR)")
         for i, enemy in enumerate(self.line_enemies, 1):
-            print(f"l{i} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
+            print(f"l{i}{self.prints} = LineEnemy({enemy.start_x}, {enemy.start_y}, "
                   f"{enemy.end_x}, {enemy.end_y}, 2, LINE_ENEMY_COLOR)")
         
         # Print radial enemy declarations
-        print("#r_ = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
+        print("#r_{self.prints} = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
         for i, enemy in enumerate(self.radial_enemies, 1):
-            print(f"r{i} = RadialEnemy({enemy.cx}, {enemy.cy}, "
+            print(f"r{i}{self.prints} = RadialEnemy({enemy.cx}, {enemy.cy}, "
                   f"{enemy.radius}, 0.01, RADIAL_ENEMY_COLOR)")
         
         # Print level constructor
-        wall_vars = [f"w{i}" for i in range(1, len(self.walls) + 1)]
-        line_vars = [f"l{i}" for i in range(1, len(self.line_enemies) + 1)]
-        rad_vars = [f"r{i}" for i in range(1, len(self.radial_enemies) + 1)]
+        wall_vars = [f"w{i}{self.prints}" for i in range(1, len(self.walls) + 1)]
+        line_vars = [f"l{i}{self.prints}" for i in range(1, len(self.line_enemies) + 1)]
+        rad_vars = [f"r{i}{self.prints}" for i in range(1, len(self.radial_enemies) + 1)]
         
         wall_str = f"[{', '.join(wall_vars)}]+outers" if wall_vars else "outers"
         line_str = f"[{', '.join(line_vars)}]" if line_vars else "[]"
         rad_str = f"[{', '.join(rad_vars)}]" if rad_vars else "[]"
         
-        print(f"\nlevel = Level({wall_str}, {line_str}, {rad_str})")
+        print(f"\nlevel_{self.prints} = Level({wall_str}, {line_str}, {rad_str})")
         print("==================")
 
 class Player:
