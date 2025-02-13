@@ -120,7 +120,7 @@ class LevelEditor:
                   f"{enemy.end_x}, {enemy.end_y}, 2, LINE_ENEMY_COLOR)")
         
         # Print radial enemy declarations
-        print("#r_{self.prints} = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
+        print("#r_ = RadialEnemy(cx, cy, radius, speed, RADIAL_ENEMY_COLOR)")
         for i, enemy in enumerate(self.radial_enemies, 1):
             print(f"r{i}{self.prints} = RadialEnemy({enemy.cx}, {enemy.cy}, "
                   f"{enemy.radius}, 0.01, RADIAL_ENEMY_COLOR)")
